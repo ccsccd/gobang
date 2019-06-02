@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>register</title>
+    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.min.js"></script>
+    <script src="http://cdn.bootcss.com/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>
+</head>
+
+<body>
+<div style="margin: auto;text-align: center">
+    <h1>Register</h1>
+</div>
+<br/>
+<div style="margin: auto;text-align: center">
+    <span>邮箱: </span>
+    <input id="eMail" type="text"/>
+    <br/>
+    <span>昵称: </span>
+    <input id="username" type="text"/>
+    <br/>
+    <span>密码: </span>
+    <input id="password" type="password"/>
+    <br/>
+    <div style="margin-left: 88px">
+        <span>验证码: </span>
+        <input id="code" type="text" style="width:142px "/>
+        <button onclick="getCode()">获取验证码</button>
+        <br/>
+    </div>
+    <br/>
+    <button onclick="send()">注册</button>
+</div>
+<br>
+</div>
+<hr/>
+<div id="message" style="text-align: center;"></div>
+</body>
+</html>
+<script type="text/javascript">
+    function setMessageInnerHTML(innerHTML) {
+        document.getElementById('message').innerHTML += innerHTML + '<br/>';
+    }
+
+    function send() {
+        $.post("/gobang/register",
+            {
+                username: document.getElementById('username').value.toString(),
+                eMail: document.getElementById('eMail').value.toString(),
+                password: document.getElementById('password').value.toString(),
+                code: document.getElementById('code').value.toString()
+            }
+            ,
+            function (obj) {
+                setMessageInnerHTML(obj.data);
+                if (obj.status == 200) {
+                    setMessageInnerHTML("三秒后跳转页面");
+                    setTimeout(function () {
+                        go();
+                    }, 3000);
+                }
+            });
+    }
+
+    function go() {
+        window.location.href = "/gobang/view/login";
+    }
+
+    function getCode() {
+        $.post("/gobang/email",
+            {
+                eMail: document.getElementById('eMail').value.toString(),
+            }
+            ,
+            function (obj) {
+                setMessageInnerHTML(obj.data);
+            });
+    }
+</script>
